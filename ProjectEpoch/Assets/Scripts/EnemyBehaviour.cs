@@ -39,4 +39,9 @@ public class EnemyBehaviour : MonoBehaviour {
 			this.transform.Translate (direction * speed * Time.deltaTime);
 		}
 	}
+
+
+	void OnCollisionEnter(Collision col){
+		Debug.Log ("KO");
+	}
 }

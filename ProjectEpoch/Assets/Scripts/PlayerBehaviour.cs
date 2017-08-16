@@ -9,15 +9,16 @@ public class PlayerBehaviour : MonoBehaviour {
 	public float rotationSpeed;
 	public Transform bomb;
 	public Transform bombSpawn;
-	public Transform bombExplosionPos;
+	public Transform bombExplosionPosSpawn;
 
 	// TODO: Possibly refactor bomb into its own class
 	private Transform bombInstance;
 	private float bombSize;
 	private float bombTimer;
 	public float bombTimeout = 15f;
-
+	public float bombGrowSpeed;
 	public float throwForce;
+	private Vector3 explosionPos;
 
 
 	// Use this for initialization
@@ -25,6 +26,7 @@ public class PlayerBehaviour : MonoBehaviour {
 		bombInstance = null;
 		bombSize = 0.01f;
 		bombTimer = 0f;
+		explosionPos = bombExplosionPosSpawn.position;
 	}
 	
 	// Update is called once per frame
@@ -40,7 +42,7 @@ public class PlayerBehaviour : MonoBehaviour {
 					// Remove constraints
 					bombInstance.GetComponent<Rigidbody> ().constraints = 0;
 					// Let 'er fly
-					bombInstance.GetComponent<Rigidbody> ().AddExplosionForce (throwForce, bombExplosionPos.position, 200f);
+					bombInstance.GetComponent<Rigidbody> ().AddExplosionForce (throwForce, bombExplosionPosSpawn.position, 200f);
 				}
 
 				bombTimer += Time.deltaTime;
@@ -59,6 +61,7 @@ public class PlayerBehaviour : MonoBehaviour {
 	void chargeBomb(){
 		//Create bomb if none exists
 		if (bombInstance == null) {
+			explosionPos = bombExplosionPosSpawn.position;
 			bombSize = 0.01f;
 			bombTimer = 0f;
 			bombInstance = Instantiate (bomb, bombSpawn.position, bombSpawn.rotation);
@@ -66,9 +69,10 @@ public class PlayerBehaviour : MonoBehaviour {
 			// Freeze in space
 			bombInstance.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
 		}
-		bombSize += 0.001f;
+		bombSize += bombGrowSpeed;
 		bombInstance.transform.localScale = new Vector3 (bombSize, bombSize, bombSize);
 		// Raise it up a bit each time it grows
-		bombInstance.position += new Vector3(0f, 0.001f, 0f);
+		bombInstance.position += new Vector3(0f, bombGrowSpeed, 0f);
+		explosionPos += new Vector3 (0f, 0f, -bombGrowSpeed);
 	}
 }
