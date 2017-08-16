@@ -9,6 +9,8 @@ public class EnemyBehaviour : MonoBehaviour {
 	public float speed;  // User defined
 	public float turnaroundTime;  // Timeout for 
 
+	public ParticleSystem particles;
+
 	private float turnaroundTimer;
 	private Vector3 direction;  // Direction of travel
 	private int destination;  // Destination of travel
@@ -17,6 +19,7 @@ public class EnemyBehaviour : MonoBehaviour {
 	void Start () {
 		turnaroundTimer = 0.0f;
 		direction = Vector3.zero;
+		particles.Stop ();
 	}
 	
 	// Update is called once per frame
@@ -28,6 +31,7 @@ public class EnemyBehaviour : MonoBehaviour {
 			turnaroundTimer = 0.0f; // Reset timer
 			// Randomly choose a point from the list
 			destination = Random.Range (0, points.Count);
+			particles.Stop();
 		}
 
 		Vector3 distance = points [destination].position - this.transform.position;
@@ -43,5 +47,6 @@ public class EnemyBehaviour : MonoBehaviour {
 
 	void OnCollisionEnter(Collision col){
 		Debug.Log ("KO");
+		particles.Play();
 	}
 }
