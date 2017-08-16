@@ -30,8 +30,13 @@ public class EnemyBehaviour : MonoBehaviour {
 			destination = Random.Range (0, points.Count);
 		}
 
-		// Determine direction this should travel
-		direction = Vector3.Normalize(points[destination].position - this.transform.position);
-		this.transform.Translate(direction * speed * Time.deltaTime);
+		Vector3 distance = points [destination].position - this.transform.position;
+
+		// If the distance is sufficiently large, translate
+		if (distance.magnitude > 1f) {
+			// Determine direction this should travel
+			direction = Vector3.Normalize (distance);
+			this.transform.Translate (direction * speed * Time.deltaTime);
+		}
 	}
 }
