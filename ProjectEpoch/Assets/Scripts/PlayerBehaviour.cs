@@ -15,12 +15,12 @@ public class PlayerBehaviour : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (Input.GetMouseButton (0)) {
-			
-			arms.Rotate (Vector3.right, rotationSpeed * Time.deltaTime);
-
+			// Rotate the arms!
+			arms.Rotate (Vector3.left, rotationSpeed * Time.deltaTime);
 			chargeBomb ();
 		} else {
-
+			// Do nothing.
+			// Experimented with using arms.rotation.eulerangles.x as a constraint, but it does not behave as expected.
 		}
 	}
 
