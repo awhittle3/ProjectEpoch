@@ -1,6 +1,10 @@
-﻿using System.Collections;
+﻿#define KINECTMODE
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+
 
 public class PlayerBehaviour : MonoBehaviour {
 
@@ -20,6 +24,10 @@ public class PlayerBehaviour : MonoBehaviour {
 	public float throwForce;
 	private Vector3 explosionPos;
 
+	public Transform kRightArm;
+	public Transform kLeftArm;
+	public Transform kLowerTorso;
+
 
 	// Use this for initialization
 	void Start () {
@@ -36,9 +44,15 @@ public class PlayerBehaviour : MonoBehaviour {
 			Application.Quit ();
 		}
 
+		#if (KINECTMODE)
+		if (armsUp()){
+		#else
+	
 		if (Input.GetMouseButton (0)) {
 			// Rotate the arms!
 			arms.Rotate (Vector3.left, armRotationSpeed * Time.deltaTime);
+		#endif
+
 			chargeBomb ();
 		} else {
 			if (bombInstance != null) {
@@ -46,6 +60,7 @@ public class PlayerBehaviour : MonoBehaviour {
 				if (bombTimer < 0.001f) {
 					// Remove constraints
 					bombInstance.GetComponent<Rigidbody> ().constraints = 0;
+					bombInstance.GetComponent<Rigidbody>().useGravity = true;
 					// Let 'er fly
 					bombInstance.GetComponent<Rigidbody> ().AddExplosionForce (throwForce, bombExplosionPosSpawn.position, 200f);
 				}
@@ -72,12 +87,25 @@ public class PlayerBehaviour : MonoBehaviour {
 			bombInstance = Instantiate (bomb, bombSpawn.position, bombSpawn.rotation);
 			bombInstance.transform.localScale = new Vector3 (bombSize, bombSize, bombSize);
 			// Freeze in space
-			bombInstance.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+			bombInstance.GetComponent<Rigidbody>().useGravity = false;
 		}
+		bombInstance.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+
 		bombSize += bombGrowSpeed;
 		bombInstance.transform.localScale = new Vector3 (bombSize, bombSize, bombSize);
 		// Raise it up a bit each time it grows
-		bombInstance.position += new Vector3(0f, bombGrowSpeed, 0f);
-		explosionPos += new Vector3 (0f, 0f, -bombGrowSpeed);
+		bombInstance.position += new Vector3(0f, bombGrowSpeed/2f, 0f);
+		explosionPos += new Vector3 (0f, 0f, -bombGrowSpeed/2);
 	}
+
+	#if (KINECTMODE)
+
+	//Simple function for 
+	bool armsUp(){
+			return (kRightArm.position.y > kLowerTorso.position.y && kLeftArm.position.y > kLowerTorso.position.y);
+	}
+
+	#endif
 }
+
+
