@@ -8,3 +8,5 @@ inspired by the Spirit Bomb from the series Dragonball Z.
 You can rotate with the right and left arrow keys.  Click and hold the mouse to
 charge up the bomb, and release to throw it.  See how many times you can hit the
 enemy!
+
+Hit the escape key to quit.
