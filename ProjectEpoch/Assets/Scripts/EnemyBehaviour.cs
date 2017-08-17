@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class EnemyBehaviour : MonoBehaviour {
 
@@ -9,17 +10,24 @@ public class EnemyBehaviour : MonoBehaviour {
 	public float speed;  // User defined
 	public float turnaroundTime;  // Timeout for 
 
+	public Text scoreText;
+	public Text koText;
+
 	public ParticleSystem particles;
 
 	private float turnaroundTimer;
 	private Vector3 direction;  // Direction of travel
 	private int destination;  // Destination of travel
+	private int score;
 
 	// Use this for initialization
 	void Start () {
 		turnaroundTimer = 0.0f;
 		direction = Vector3.zero;
 		particles.Stop ();
+		score = 0;
+		scoreText.text = "SCORE: " + score.ToString ();
+		koText.text = "";
 	}
 	
 	// Update is called once per frame
@@ -32,6 +40,7 @@ public class EnemyBehaviour : MonoBehaviour {
 			// Randomly choose a point from the list
 			destination = Random.Range (0, points.Count);
 			particles.Stop();
+			koText.text = "";
 		}
 
 		Vector3 distance = points [destination].position - this.transform.position;
@@ -42,11 +51,16 @@ public class EnemyBehaviour : MonoBehaviour {
 			direction = Vector3.Normalize (distance);
 			this.transform.Translate (direction * speed * Time.deltaTime);
 		}
+
+	
 	}
 
 
 	void OnCollisionEnter(Collision col){
 		Debug.Log ("KO");
 		particles.Play();
+		score += 1;
+		scoreText.text = "SCORE: " + score.ToString ();
+		koText.text = "K.O.";
 	}
 }
