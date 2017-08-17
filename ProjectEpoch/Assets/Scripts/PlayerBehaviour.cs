@@ -31,6 +31,11 @@ public class PlayerBehaviour : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+		if (Input.GetKey ("escape")) {
+			Application.Quit ();
+		}
+
 		if (Input.GetMouseButton (0)) {
 			// Rotate the arms!
 			arms.Rotate (Vector3.left, armRotationSpeed * Time.deltaTime);
