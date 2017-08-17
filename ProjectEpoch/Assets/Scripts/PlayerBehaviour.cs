@@ -22,7 +22,7 @@ public class PlayerBehaviour : MonoBehaviour {
 	public float bombTimeout = 15f;
 	public float bombGrowSpeed;
 	public float throwForce;
-	private Vector3 explosionPos;
+	//private Vector3 explosionPos;
 
 	public Transform kRightArm;
 	public Transform kLeftArm;
@@ -34,7 +34,7 @@ public class PlayerBehaviour : MonoBehaviour {
 		bombInstance = null;
 		bombSize = 0.01f;
 		bombTimer = 0f;
-		explosionPos = bombExplosionPosSpawn.position;
+		//explosionPos = bombExplosionPosSpawn.position;
 	}
 	
 	// Update is called once per frame
@@ -61,13 +61,26 @@ public class PlayerBehaviour : MonoBehaviour {
 					// Remove constraints
 					bombInstance.GetComponent<Rigidbody> ().constraints = 0;
 					bombInstance.GetComponent<Rigidbody>().useGravity = true;
+
+
+					// Determine direction of flight
+					Vector3 diff = kLeftArm.position - kRightArm.position;
+					diff.y = 0f;
+					float angle = Vector3.Angle(Vector3.left, diff);
+
+					// Move the motivating force around
+					GameObject tempExplosion = new GameObject();
+					tempExplosion.transform.position = bombExplosionPosSpawn.position; // Copying
+					tempExplosion.transform.RotateAround(this.transform.position, Vector3.up, angle - 45f);
+
 					// Let 'er fly
-					bombInstance.GetComponent<Rigidbody> ().AddExplosionForce (throwForce, bombExplosionPosSpawn.position, 200f);
+					bombInstance.GetComponent<Rigidbody> ().AddExplosionForce (throwForce, tempExplosion.transform.position, 200f);
 				}
 
 				bombTimer += Time.deltaTime;
 
 				if (bombTimer > bombTimeout) {
+					// Destroy after some time
 					Destroy (bombInstance.gameObject);
 				}
 			}
@@ -81,7 +94,7 @@ public class PlayerBehaviour : MonoBehaviour {
 	void chargeBomb(){
 		//Create bomb if none exists
 		if (bombInstance == null) {
-			explosionPos = bombExplosionPosSpawn.position;
+			//explosionPos = bombExplosionPosSpawn.position;
 			bombSize = 0.01f;
 			bombTimer = 0f;
 			bombInstance = Instantiate (bomb, bombSpawn.position, bombSpawn.rotation);
@@ -95,12 +108,12 @@ public class PlayerBehaviour : MonoBehaviour {
 		bombInstance.transform.localScale = new Vector3 (bombSize, bombSize, bombSize);
 		// Raise it up a bit each time it grows
 		bombInstance.position += new Vector3(0f, bombGrowSpeed/2f, 0f);
-		explosionPos += new Vector3 (0f, 0f, -bombGrowSpeed/2);
+		//explosionPos += new Vector3 (0f, 0f, -bombGrowSpeed/2);
 	}
 
 	#if (KINECTMODE)
 
-	//Simple function for 
+	// Simple function for determining whether arms are above the waist
 	bool armsUp(){
 			return (kRightArm.position.y > kLowerTorso.position.y && kLeftArm.position.y > kLowerTorso.position.y);
 	}
